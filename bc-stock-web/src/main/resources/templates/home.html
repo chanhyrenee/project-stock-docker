@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ece8e0;
+            color: #685918;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #413b49;
+            width: 100%;
+            padding: 5px 20px;
+            text-align: right;
+            color: #ffffff;
+            font-size: 0.8em;
+            box-sizing: border-box;
+            line-height: 1;
+            position: fixed;
+        }
+        header p {
+            margin: 0;
+            display: inline-block;
+        }
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: auto;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.5em;
+        }
+        p {
+            font-size: 1em;
+            margin-bottom: 2em;
+            text-align: center;
+        }
+        .link {
+            display: inline-block;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #3c0a76;
+            padding: 1em 2em;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+        footer {
+            background-color: #413b49;
+            width: 100%;
+            padding: 5px 20px;
+            text-align: left;
+            color: #f1e9f1;
+            font-size: 0.8em;
+            box-sizing: border-box;
+            line-height: 1;
+            position: fixed;
+            bottom: 0;
+        }
+        footer p {
+            font-style: italic;
+            text-align: left;
+            margin: 0;
+        }
+        .link:hover {
+            background-color: #938c99;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <p><a href="https://github.com/chanhyrenee">GitHub</a>&nbsp;</p>
+        <p>  |  </p>
+        <p>&nbsp;<a href="mailto:chanhyrenee@gmail.com">Contact Me</a></p>
+    </header>
+    <div class="container">
+        <h1>Stock Technical Analysis Graph</h1>
+        <p>A web application showcasing real-time and over 10 years of historical stock data from an internally-managed database.</p>
+        <p>The raw data is sourced from the Yahoo Finance API.</p>
+        <a class="link" href="/realtime?symbol=2800.HK">Real-Time Stock Graph</a>
+        <a class="link" href="/history?symbol=2800.HK">Historical Stock Graph</a>
+    </div>
+    <footer>
+        <p>Real-time data displayed with a 15-minute delay.</p>
+    </footer>
+</body>
+</html>

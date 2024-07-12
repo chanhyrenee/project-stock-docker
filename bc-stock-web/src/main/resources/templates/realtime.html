@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stock Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #ece8e0;
+        color: #685918;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+      header {
+        background-color: #413b49;
+        width: 100%;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #ffffff;
+        font-size: 0.8em;
+        box-sizing: border-box;
+        line-height: 1;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      header .left,
+      header .right {
+        display: flex;
+        align-items: center;
+      }
+      header .left p {
+        margin: 0;
+        margin-right: 20px;
+      }
+      header .right p {
+        margin: 0;
+        margin-left: 10px;
+      }
+      header a {
+        color: #ffffff;
+        text-decoration: none;
+      }
+      .dropdown-container {
+        margin-left: 20px;
+      }
+      select {
+        padding: 3px 3px;
+        font-size: 1.1em;
+        color: #ffffff;
+        background-color: #413b49;
+        border: 1px solid #ffffff;
+        border-radius: 5px;
+      }
+      select option {
+        background-color: #413b49;
+        color: #ffffff;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 80px;
+        margin-bottom: 20px;
+      }
+      .chart-container {
+        position: relative;
+        width: 800px;
+        height: 600px;
+        margin-bottom: 20px;
+      }
+      #stockDetails {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 790px;
+        padding: 5px;
+        background-color: #5b584a;
+        color: #ffffff;
+        border-radius: 5px;
+        font-size: 1em;
+        margin-bottom: 0px;
+        margin-top: -20px;
+      }
+      #stockDetails div p {
+        margin-left: 25px;
+        margin-right: 25px;
+      }
+      #stockDetails .right {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      footer {
+        background-color: #413b49;
+        width: 100%;
+        padding: 10px 20px;
+        text-align: left;
+        color: #f1e9f1;
+        font-size: 0.8em;
+        box-sizing: border-box;
+        line-height: 1;
+        position: fixed;
+        bottom: 0;
+      }
+      footer p {
+        font-style: italic;
+        text-align: left;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="left">
+        <p><a href="/home">Home</a></p>
+        <div class="dropdown-container">
+          <select id="redirectDropdown" onchange="redirectToPage()">
+            <option value="">select stock</option>
+            <option th:value="@{/realtime(symbol='2800.HK')}" th:text="'2800-TraHK'"></option>
+            <option th:value="@{/realtime(symbol='0005.HK')}" th:text="'0005-HSBC'"></option>
+            <option th:value="@{/realtime(symbol='0388.HK')}" th:text="'0388-HKEX'"></option>
+            <option th:value="@{/realtime(symbol='0700.HK')}" th:text="'0700-TENCENT'"></option>
+            <option th:value="@{/realtime(symbol='2388.HK')}" th:text="'2388-BOC'"></option>
+          </select>
+        </div>
+      </div>
+      <div class="right">
+        <p><a href="https://github.com/chanhyrenee">GitHub</a></p>
+        <p>|</p>
+        <p><a href="mailto:chanhyrenee@gmail.com">Contact Me</a></p>
+      </div>
+    </header>
+    <div class="container">
+      <div id="stockDetails">
+        <div>
+          <p id="stockSymbol" style="margin: 0;">Stock:</p>
+          <p id="companyName" style="margin: 0;">Company:</p>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <p id="askPrice" style="margin-right: 20px; font-size: 1em;">Ask:</p>
+          <p id="bidPrice" style="font-size: 1em;">Bid:</p>
+        </div>
+        <p id="regularMarketChangePercent" style="margin-right: 10px; font-size: 1em;">Change:</p>
+      </div>
+    </div>
+      <div class="chart-container" id="stockChart"></div>
+      </div>
+    </div>
+    <footer>
+      <p>Real-time data displayed with a 15-minute delay.</p>
+    </footer>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/stock.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+    <script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+    <script src="https://code.highcharts.com/stock/indicators/sma.js"></script>
+    <script type="text/javascript">
+      const symbol = "[[${symbol}]]";
+      function fetchStockData() {
+        fetch(`/five-minute?symbol=${symbol}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const processedData = data.map((item) => [
+              new Date(item.timestamp).getTime(),
+              item.price,
+            ]);
+            const movingAverageData10 = data
+              .filter((item) => item.movingAverage10 !== 0.0)
+              .map((item) => [
+                new Date(item.timestamp).getTime(),
+                item.movingAverage10,
+              ]);
+              const movingAverageData20 = data
+              .filter((item) => item.movingAverage20 !== 0.0)
+              .map((item) => [
+                new Date(item.timestamp).getTime(),
+                item.movingAverage20,
+              ]);
+            Highcharts.stockChart("stockChart", {
+              rangeSelector: {
+                selected: 1,
+              },
+              title: {
+                text: `Real-time Intraday Stock Prices - ${symbol}`,
+                align: "center",
+              },
+              time: {
+                useUTC: true,
+              },
+              tooltip: {
+                formatter: function () {
+                  return `<b>Date:</b> ${Highcharts.dateFormat(
+                    "%Y-%m-%d %H:%M",
+                    this.x
+                  )}<br><b>Price:</b> ${this.y.toFixed(2)}`;
+                },
+              },
+              series: [
+                {
+                  name: "Price",
+                  data: processedData,
+                  type: "line",
+                  tooltip: {
+                    valueDecimals: 2,
+                  },
+                },
+                {
+                  name: "Moving Average 10",
+                  data: movingAverageData10,
+                  type: "sma",
+                  marker: {
+                    enabled: false,
+                  },
+                  tooltip: {
+                    valueDecimals: 2,
+                  },
+                },
+                {
+                  name: "Moving Average 20",
+                  data: movingAverageData20,
+                  type: "sma",
+                  marker: {
+                    enabled: false,
+                  },
+                  tooltip: {
+                    valueDecimals: 2,
+                  },
+                },
+              ],
+            });
+          });
+      }
+      function fetchAskBidData() {
+        fetch(`/latest?symbol=${symbol}`)
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById(
+              "stockSymbol"
+            ).textContent = `Stock: ${symbol}`;
+            document.getElementById(
+              "companyName"
+            ).textContent = `${data.companyName}`;
+            document.getElementById(
+              "askPrice"
+            ).textContent = `Ask: ${data.ask}`;
+            document.getElementById(
+              "bidPrice"
+            ).textContent = `Bid: ${data.bid}`;
+            document.getElementById(
+              "regularMarketChangePercent"
+            ).textContent = `Change: ${data.regularMarketChangePercent}%`;
+          });
+      }
+      setInterval(fetchStockData, 10000);
+      setInterval(fetchAskBidData, 10000);
+      fetchStockData();
+      fetchAskBidData();
+    var contextPath = /*[[@{/}]]*/ '';
+    function redirectToPage() {
+        var selectedValue = document.getElementById('redirectDropdown').value;
+        if (selectedValue) {
+            window.location.href = contextPath + selectedValue;
+        }
+    }
+    </script>
+  </body>
+</html>

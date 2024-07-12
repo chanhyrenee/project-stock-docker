@@ -1,0 +1,49 @@
+version: "3"
+services:
+  bc-yahoo-finace:
+    image: bc-yahoo-finace:0.0.1
+    container_name: backend
+    networks:
+      - app-network
+    ports:
+      - "8110:8100"
+
+  bc-stock-web:
+    image: bc-stock-web:0.0.1
+    container_name: frontend
+    networks:
+      - app-network
+    ports:
+      - "8111:8101"
+
+  postgres:
+    image: postgres:15 # version 15
+    container_name: postgresdb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin1234
+      POSTGRES_DB: finance
+      PGDATA: /var/lib/postgresql/data/pgdata15
+    networks:
+      - app-network
+    ports:
+      - "5532:5432"
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data/pgdata"
+
+  redis:
+    image: redis:7
+    container_name: redisserver
+    networks:
+      - app-network
+    ports:
+      - "6479:6379"
+    volumes:
+      - "./redis_data:/data"
+
+volumes:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,14 @@
+server:
+  port: 8101
+
+api:
+  stockprice5min:
+    #domain: 'backend'
+    domain: 'localhost:8100'
+    endstocklist: /stocklist
+    endpoint5min: /stock5minquote
+    endpointHistory: /history
+
+spring:
+  application:
+    name: bc-stock-web

@@ -1,0 +1,64 @@
+server:
+  port: 8100
+
+spring.jackson:
+  time-zone: Asia/Hong_Kong
+
+api:
+  yahoofinanceapi:
+    domain: 'query1.finance.yahoo.com'
+    endpoint:
+      v7: '/v7/finance/quote'
+      v8: '/v8/finance/chart/'
+
+database: 
+  db-name: "finance"
+
+spring:
+  application:
+    name: stock-backend
+  datasource:
+    driverClassName: "org.postgresql.Driver"
+    url: "jdbc:postgresql://postgresdb:5432/${database.db-name}"
+    username: "postgres"
+    password: "admin1234"
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: update
+  data:
+    redis:
+      host: redisserver
+      port: 6379
+  cache:
+    redis:
+      stockList: 'STOCK-LIST'
+      5minQuote: '5MIN-'
+      sysdate: 'SYSDATE'
+      AskBid: 'ASKBID'
+
+info:
+  application:
+    name: stock-backend
+    description: stock-backend
+    author:
+      name: Renee
+      bio: Development
+
+management:
+  endpoints:
+    web:
+      base-path: /data
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      group:
+        readiness:
+          show-details: always
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
