@@ -70,9 +70,6 @@ public class AppRunner implements CommandLineRunner {
         historyService.saveHistory(
             historyEntityMapper.map(historyService.getHistoryApi(stock,
                 String.valueOf(1704038400), String.valueOf(1735660800))));
-        historyService.saveHistory(
-            historyEntityMapper.map(historyService.getHistoryApi(stock,
-                String.valueOf(1719763200), String.valueOf(1722441600))));
       });
     } catch (RestClientException e) {
       log.error("API connection error.");

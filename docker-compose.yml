@@ -2,7 +2,7 @@ version: "3"
 services:
   bc-yahoo-finace:
     image: bc-yahoo-finace:0.0.1
-    container_name: backend
+    container_name: bc-yahoo-finance
     networks:
       - app-network
     ports:
@@ -10,7 +10,7 @@ services:
 
   bc-stock-web:
     image: bc-stock-web:0.0.1
-    container_name: frontend
+    container_name: bc-stock-web
     networks:
       - app-network
     ports:

@@ -1,6 +1,5 @@
 package com.bootcamp.bc.bc_stock_web.service.impl;
 
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +16,6 @@ import com.bootcamp.bc.bc_stock_web.model.History;
 import com.bootcamp.bc.bc_stock_web.model.Quote;
 import com.bootcamp.bc.bc_stock_web.model.StockList;
 import com.bootcamp.bc.bc_stock_web.service.DataService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class DataServiceImpl implements DataService {
@@ -82,7 +77,6 @@ public class DataServiceImpl implements DataService {
   public List<History> getHistoryData(String symbol) {
     String url = UrlBuilder.get(Protocol.HTTP, domain, endpointHistory,
         "symbol", symbol);
-
         ApiResp<List<History>> response =
         restTemplate
             .exchange(url, HttpMethod.GET, null,

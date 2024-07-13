@@ -3,8 +3,7 @@ server:
 
 api:
   stockprice5min:
-    #domain: 'backend'
-    domain: 'localhost:8100'
+    domain: 'bc-yahoo-finance:8100'
     endstocklist: /stocklist
     endpoint5min: /stock5minquote
     endpointHistory: /history
